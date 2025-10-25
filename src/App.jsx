@@ -1,28 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import Header from './components/Header'
+import Hero from './components/Hero'
+import Sections from './components/Sections'
+import Footer from './components/Footer'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [theme, setTheme] = useState('system')
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme') || 'system'
+    setTheme(stored)
+  }, [])
+
+  useEffect(() => {
+    const root = document.documentElement
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isDark = theme === 'dark' || (theme === 'system' && systemDark)
+
+    if (isDark) root.classList.add('dark')
+    else root.classList.remove('dark')
+
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#0b1020] text-zinc-200 scroll-smooth selection:bg-yellow-400/30 selection:text-yellow-100">
+      <Header theme={theme} setTheme={setTheme} />
+      <main>
+        <Hero />
+        <Sections />
+      </main>
+      <Footer />
     </div>
   )
 }
-
-export default App
